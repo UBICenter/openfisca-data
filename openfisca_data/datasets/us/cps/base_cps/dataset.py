@@ -67,7 +67,7 @@ class BaseCPS:
         family["family_id"] = family.F_FH_SEQ * 10 + family.F_FFPOS
         household["household_id"] = household.H_H_SEQ
 
-        person["person_weight"] = person.P_A_FNLWGT
+        person["person_weight"] = person.P_MARSUPWT
         tax_unit = pd.DataFrame(index=person.person_tax_unit_id.unique())
         spm_unit = pd.DataFrame(index=person.person_spm_unit_id.unique())
         tax_unit["tax_unit_id"] = tax_unit.index
@@ -75,7 +75,9 @@ class BaseCPS:
         tax_unit[
             "tax_unit_weight"
         ] = 1e5  # not accurate, just a placeholder until development
-        spm_unit["spm_unit_weight"] = 1e5
+        spm_unit["spm_unit_weight"] = person.P_SPM_WEIGHT.groupby(
+            person.person_spm_unit_id
+        ).first()[spm_unit.index]
         family["family_weight"] = family.F_FSUP_WGT
         household["household_weight"] = household.H_HSUP_WGT
 
